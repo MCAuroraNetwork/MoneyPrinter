@@ -1,0 +1,4 @@
+name: MoneyPrinter
+version: '${version}'
+main: club.aurorapvp.moneyprinter.MoneyPrinter
+api-version: '1.20'
