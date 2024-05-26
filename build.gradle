@@ -1,8 +1,9 @@
 plugins {
     id 'java'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-group = 'club.aurorapvp'
+group = 'MoneyPrinter'
 version = '1.0.0'
 
 repositories {
@@ -15,13 +16,32 @@ repositories {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/groups/public/"
     }
+    maven {
+        url = 'https://repo.aikar.co/content/groups/aikar/'
+    }
+    flatDir {
+        dirs '.'
+    }
 }
 
 dependencies {
-compileOnly "io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT"
+    implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
+
+    compileOnly 'io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT'
 }
 
-def targetJavaVersion = 17
+build {
+    dependsOn(shadowJar)
+}
+
+shadowJar {
+    minimize()
+    archiveFileName.set("${project.name}-${project.version}.jar")
+    relocate 'co.aikar.commands', 'club.aurorapvp.moneyprinter.shaded.acf'
+    relocate 'co.aikar.locales', 'club.aurorapvp.moneyprinter.shaded.locales'
+}
+
+def targetJavaVersion = 21
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
