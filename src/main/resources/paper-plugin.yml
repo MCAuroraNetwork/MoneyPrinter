@@ -2,3 +2,21 @@ name: MoneyPrinter
 version: '${version}'
 main: club.aurorapvp.moneyprinter.MoneyPrinter
 api-version: '1.20'
+permissions:
+  moneyprinter.command.namecolor:
+    default: false
+
+  moneyprinter.namecolor:
+    description: Allows changing name color
+    default: false
+    children:
+      moneyprinter.command.namecolor: true
+
+  moneyprinter.renameitems:
+    description: Allows the use and renaming of items
+    default: false
+
+dependencies:
+  server:
+    AuroraDuels:
+      required: false

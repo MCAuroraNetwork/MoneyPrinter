@@ -1,17 +1,42 @@
 package club.aurorapvp.moneyprinter.util;
 
-import org.bukkit.Material;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class ItemStackUtil {
 
   public static boolean hasBeenRenamed(ItemStack itemStack) {
+    ItemStack defaultItemState = new ItemStack(itemStack.getType(), itemStack.getAmount());
 
-    String defaultName =
-    // Replace underscores with spaces and capitalize the first letter
-    defaultName = defaultName.replace("_", " ");
-    defaultName = defaultName.substring(0, 1).toUpperCase() + defaultName.substring(1).toLowerCase();
-    // Compare the display name and the default name
-    return !displayName.equals(defaultName);
+    defaultItemState.addEnchantments(itemStack.getEnchantments());
+
+    Component defaultName = defaultItemState.displayName();
+
+    Component itemName = itemStack.displayName();
+
+    String originalName = PlainTextComponentSerializer.plainText().serialize(defaultName);
+
+    String customName = PlainTextComponentSerializer.plainText().serialize(itemName);
+
+    return !itemName.decorations().equals(defaultName.decorations()) && !originalName.equals(
+        customName);
+  }
+
+  public static void renameToPlainText(ItemStack itemStack) {
+    Component displayName = itemStack.displayName();
+
+    ItemMeta meta = itemStack.getItemMeta();
+
+    String displayNameStr = PlainTextComponentSerializer.plainText().serialize(displayName);
+
+    displayNameStr = displayNameStr.replace("[", "").replace("]", "");
+
+    Component displayNameWithoutBrackets = Component.text(displayNameStr);
+
+    meta.displayName(displayNameWithoutBrackets);
+
+    itemStack.setItemMeta(meta);
   }
 }
