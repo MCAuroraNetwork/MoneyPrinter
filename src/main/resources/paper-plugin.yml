@@ -1,7 +1,7 @@
 name: MoneyPrinter
 version: '${version}'
 main: club.aurorapvp.moneyprinter.MoneyPrinter
-api-version: '1.20'
+api-version: '1.21'
 permissions:
   moneyprinter.command.namecolor:
     default: false
