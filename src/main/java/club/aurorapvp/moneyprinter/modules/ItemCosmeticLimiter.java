@@ -14,7 +14,6 @@ public class ItemCosmeticLimiter {
 
   public static void onObtainItem(PlayerInventorySlotChangeEvent event) {
     if (event.getPlayer().hasPermission("moneyprinter.renameitems")) {
-      MoneyPrinter.getInstance().getLogger().log(Level.INFO, "joe");
       return;
     }
 
