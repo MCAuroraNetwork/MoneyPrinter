@@ -20,7 +20,8 @@ public class Config {
   public void generateDefaults() {
     final HashMap<String, Object> DEFAULTS = new HashMap<>();
 
-    DEFAULTS.put("", "");
+    DEFAULTS.put("mongodb.database-name", "money_printer");
+    DEFAULTS.put("mongodb.address", "mongodb://localhost:27017");
 
     for (String path : DEFAULTS.keySet()) {
       if (!getYaml().isSet(path) || getYaml().getString(path) == null) {
