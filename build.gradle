@@ -28,6 +28,9 @@ dependencies {
     implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
 
     compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
+    compileOnly 'net.citizensnpcs:citizens-main:2.0.38-SNAPSHOT'
+    compileOnly 'com.comphenix.protocol:ProtocolLib:5.1.0'
+    compileOnly ':AuroraChat:1.1.0'
 }
 
 build {

@@ -1,10 +1,18 @@
 package club.aurorapvp.moneyprinter;
 
+import club.aurorapvp.moneyprinter.commands.CommandManager;
 import club.aurorapvp.moneyprinter.configs.Config;
 import club.aurorapvp.moneyprinter.configs.Lang;
 import club.aurorapvp.moneyprinter.events.EventManager;
 import java.util.HashMap;
 import java.util.Map;
+
+import club.aurorapvp.moneyprinter.modules.MirrorTrait;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.trait.TraitInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -14,10 +22,13 @@ import org.jetbrains.annotations.NotNull;
 
 public final class MoneyPrinter extends JavaPlugin {
 
-  private static Map<Player, Team> PLAYER_TEAMS = new HashMap<>();
+  private static final Map<Player, Team> PLAYER_TEAMS = new HashMap<>();
   private static MoneyPrinter INSTANCE;
   private Lang lang;
   private Config config;
+
+  private MongoClient mongoClient;
+  private MongoDatabase mongoDatabase;
 
   public static MoneyPrinter getInstance() {
     return INSTANCE;
@@ -31,6 +42,10 @@ public final class MoneyPrinter extends JavaPlugin {
     return config.getYaml();
   }
 
+  public MongoDatabase getDatabase() {
+    return mongoDatabase;
+  }
+
   @Override
   public void onEnable() {
     long startTime = System.currentTimeMillis();
@@ -41,8 +56,20 @@ public final class MoneyPrinter extends JavaPlugin {
     lang = new Lang();
     config = new Config();
 
+    String connectionString =
+            this.getConfig().getString("mongodb.address", "mongodb://localhost:27017");
+    String databaseName = this.getConfig().getString("mongodb.database-name", "money_printer");
+
+    mongoClient = MongoClients.create(connectionString);
+    mongoDatabase = mongoClient.getDatabase(databaseName);
+
+    getLogger().info("Connected to MongoDB database: " + databaseName);
+
     // Initialize classes
     EventManager.init();
+    CommandManager.init();
+
+    CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(MirrorTrait.class).withName("mirror"));
 
     getLogger().info("MoneyPrinter enabled in " + (System.currentTimeMillis() - startTime) + "ms");
   }

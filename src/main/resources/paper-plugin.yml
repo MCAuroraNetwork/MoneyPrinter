@@ -3,7 +3,25 @@ version: '${version}'
 main: club.aurorapvp.moneyprinter.MoneyPrinter
 api-version: '1.21'
 permissions:
+  moneyprinter.command.mirror:
+    default: false
+
   moneyprinter.command.namecolor:
+    default: false
+
+  moneyprinter.command.customize:
+    default: false
+
+  moneyprinter.renameitems:
+    description: Allows the use and renaming of items
+    default: false
+
+  moneyprinter.customize.armor:
+    description: Allows customizing armor
+    default: false
+
+  moneyprinter.customize.shield:
+    description: Allows customizing armor
     default: false
 
   moneyprinter.namecolor:
@@ -12,11 +30,27 @@ permissions:
     children:
       moneyprinter.command.namecolor: true
 
-  moneyprinter.renameitems:
-    description: Allows the use and renaming of items
+  moneyprinter.customize:
+    description: Enables customization functions
     default: false
+    children:
+      moneyprinter.renameitems: true
+      moneyprinter.customize.armor: true
+      moneyprinter.customize.shield: true
+      moneyprinter.command.customize: true
+
+  moneyprinter.mirror:
+    description: Enables the creation of Mirror NPCs
+    default: op
+    children:
+      moneyprinter.command.mirror: true
 
 dependencies:
   server:
     AuroraDuels:
+      required: false
+    ProtocolLib:
+      required: false
+    Citizens:
+      load: BEFORE
       required: false
