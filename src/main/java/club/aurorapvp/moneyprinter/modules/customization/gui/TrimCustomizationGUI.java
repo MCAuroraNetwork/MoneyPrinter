@@ -56,14 +56,14 @@ public class TrimCustomizationGUI implements InventoryHolder, Listener {
   );
 
   private static final List<Integer> TRIM_SLOTS = List.of(
-          0, 9, 18, 27, 36, 45,  // Column 0
-          1, 10, 19, 28, 37, 46, // Column 1
-          2, 11, 20, 29, 38, 47  // Column 2
+          0, 9, 18, 27, 36, 45,
+          1, 10, 19, 28, 37, 46,
+          2, 11, 20, 29, 38, 47
   );
 
   private static final List<Integer> MATERIAL_SLOTS = List.of(
-          3, 12, 21, 30, 39,  // Column 3, rows 0-4
-          4, 13, 22, 31, 40   // Column 4, rows 0-4
+          3, 12, 21, 30, 39,
+          4, 13, 22, 31, 40
   );
 
   public TrimCustomizationGUI(Player player, String armorType) {

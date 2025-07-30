@@ -1,6 +1,7 @@
 package club.aurorapvp.moneyprinter.events.listeners;
 
 import club.aurorapvp.moneyprinter.MoneyPrinter;
+import club.aurorapvp.moneyprinter.modules.MirrorManager;
 import club.aurorapvp.moneyprinter.modules.customization.ItemCosmeticLimiter;
 import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import org.bukkit.event.EventHandler;
@@ -17,5 +18,6 @@ public class PlayerEventListener implements Listener {
   @EventHandler
   public void onPlayerQuit(PlayerQuitEvent event) {
     MoneyPrinter.getInstance().removeTeam(event.getPlayer());
+    MirrorManager.onPlayerQuit(event.getPlayer());
   }
 }

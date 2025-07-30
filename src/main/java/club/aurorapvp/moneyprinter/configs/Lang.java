@@ -64,6 +64,9 @@ public class Lang {
     DEFAULTS.put("color", "<yellow>Color: <bold>%s");
     DEFAULTS.put("add-pattern", "<yellow>Add Pattern ➕");
     DEFAULTS.put("clear-all-patterns", "<red>Clear All Patterns ✗");
+    DEFAULTS.put("mirror-created", "prefix <green>A new mirror has been created at your location.");
+    DEFAULTS.put("mirror-removed", "prefix <green>The nearest mirror to your location has been removed.");
+    DEFAULTS.put("mirror-not-found", "prefix <red>No mirror found within 10 blocks to remove.");
 
     for (String path : DEFAULTS.keySet()) {
       if (!getYaml().contains(path) || getYaml().getString(path) == null) {

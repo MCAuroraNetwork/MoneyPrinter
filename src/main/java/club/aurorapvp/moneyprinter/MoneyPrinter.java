@@ -4,15 +4,12 @@ import club.aurorapvp.moneyprinter.commands.CommandManager;
 import club.aurorapvp.moneyprinter.configs.Config;
 import club.aurorapvp.moneyprinter.configs.Lang;
 import club.aurorapvp.moneyprinter.events.EventManager;
-import java.util.HashMap;
-import java.util.Map;
-
-import club.aurorapvp.moneyprinter.modules.MirrorTrait;
+import club.aurorapvp.moneyprinter.modules.MirrorManager;
+import com.github.retrooper.packetevents.PacketEvents;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.trait.TraitInfo;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -20,13 +17,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public final class MoneyPrinter extends JavaPlugin {
 
   private static final Map<Player, Team> PLAYER_TEAMS = new HashMap<>();
   private static MoneyPrinter INSTANCE;
   private Lang lang;
   private Config config;
-
   private MongoClient mongoClient;
   private MongoDatabase mongoDatabase;
 
@@ -56,8 +55,7 @@ public final class MoneyPrinter extends JavaPlugin {
     lang = new Lang();
     config = new Config();
 
-    String connectionString =
-            this.getConfig().getString("mongodb.address", "mongodb://localhost:27017");
+    String connectionString = this.getConfig().getString("mongodb.address", "mongodb://localhost:27017");
     String databaseName = this.getConfig().getString("mongodb.database-name", "money_printer");
 
     mongoClient = MongoClients.create(connectionString);
@@ -68,8 +66,10 @@ public final class MoneyPrinter extends JavaPlugin {
     // Initialize classes
     EventManager.init();
     CommandManager.init();
-
-    CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(MirrorTrait.class).withName("mirror"));
+    PacketEvents.setAPI(SpigotPacketEventsBuilder.build(MoneyPrinter.getInstance()));
+    PacketEvents.getAPI().getSettings().bStats(true).checkForUpdates(false).debug(false);
+    PacketEvents.getAPI().load();
+    MirrorManager.init();
 
     getLogger().info("MoneyPrinter enabled in " + (System.currentTimeMillis() - startTime) + "ms");
   }
@@ -77,17 +77,16 @@ public final class MoneyPrinter extends JavaPlugin {
   @Override
   public void onDisable() {
     long startTime = System.currentTimeMillis();
-
     getLogger().info("MoneyPrinter disabled in " + (System.currentTimeMillis() - startTime) + "ms");
   }
 
   public void onPlayerJoin(Player player) {
     Team team = Bukkit.getScoreboardManager().getMainScoreboard()
-        .getTeam("MoneyPrinter " + player.getName());
+            .getTeam("MoneyPrinter " + player.getName());
 
     if (team == null) {
       team = Bukkit.getScoreboardManager().getMainScoreboard()
-          .registerNewTeam("MoneyPrinter " + player.getName());
+              .registerNewTeam("MoneyPrinter " + player.getName());
     }
 
     PLAYER_TEAMS.put(player, team);

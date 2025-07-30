@@ -91,13 +91,11 @@ public class NameCustomizationGUI implements InventoryHolder, Listener {
             this, 54, MoneyPrinter.getInstance().getLang().getComponent("customize-display-name"));
     DisplayName displayName = nameTag.getDisplayName();
     List<List<TextColor>> frameColors = displayName.getFrameColors();
-    // Ensure frameColors is not null and has at least one frame
     if (frameColors == null) {
       frameColors = new ArrayList<>();
       frameColors.add(new ArrayList<>());
       displayName.setFrameColors(frameColors);
     }
-    // Find the first non-empty frame or default to 0 if all are empty
     if (!frameColors.isEmpty()) {
       for (int i = 0; i < frameColors.size(); i++) {
         if (frameColors.get(i) != null && !frameColors.get(i).isEmpty()) {
@@ -113,7 +111,6 @@ public class NameCustomizationGUI implements InventoryHolder, Listener {
   private void populateGUI() {
     DisplayName displayName = nameTag.getDisplayName();
     List<List<TextColor>> frameColors = displayName.getFrameColors();
-    // Safety check to ensure frameColors is not null
     if (frameColors == null) {
       frameColors = new ArrayList<>();
       frameColors.add(new ArrayList<>());
@@ -127,7 +124,6 @@ public class NameCustomizationGUI implements InventoryHolder, Listener {
     }
     List<TextColor> colors = frameColors.get(currentFrameIndex);
 
-    // Place player head in slot 8 (top right)
     ItemStack head = new ItemStack(Material.PLAYER_HEAD);
     head.editMeta(
             SkullMeta.class,
@@ -139,7 +135,6 @@ public class NameCustomizationGUI implements InventoryHolder, Listener {
             });
     inventory.setItem(8, head);
 
-    // Place selected dyes beneath player head in slots 17, 26, 35, 44
     for (int i = 0; i < 4; i++) {
       int slot = SELECTED_SLOTS.get(i);
       if (colors != null && i < colors.size()) {
@@ -154,7 +149,6 @@ public class NameCustomizationGUI implements InventoryHolder, Listener {
       }
     }
 
-    // Place dye selection vertically in columns 0-3, rows 0-3
     for (int i = 0; i < SELECTION_DYES.size(); i++) {
       Material dyeType = SELECTION_DYES.get(i);
       String colorName = DYE_NAMES.get(dyeType);
@@ -165,7 +159,6 @@ public class NameCustomizationGUI implements InventoryHolder, Listener {
       inventory.setItem(slot, dye);
     }
 
-    // Place control buttons in bottom row (slots 45-53)
     ItemStack previousFrame = new ItemStack(Material.ARROW);
     previousFrame.editMeta(
             m -> m.displayName(MoneyPrinter.getInstance().getLang().getComponent("previous-frame")));
@@ -251,12 +244,12 @@ public class NameCustomizationGUI implements InventoryHolder, Listener {
         populateGUI();
         player.updateInventory();
       }
-    } else if (slot == 45) { // Previous frame
+    } else if (slot == 45) {
       int totalFrames = frameColors.size();
       currentFrameIndex = (currentFrameIndex - 1 + totalFrames) % totalFrames;
       populateGUI();
       player.updateInventory();
-    } else if (slot == 46) { // Next frame
+    } else if (slot == 46) {
       int totalFrames = frameColors.size();
       if (currentFrameIndex == totalFrames - 1 && !frameColors.get(totalFrames - 1).isEmpty() && totalFrames < 10) {
         frameColors.add(new ArrayList<>());
@@ -266,9 +259,9 @@ public class NameCustomizationGUI implements InventoryHolder, Listener {
       }
       populateGUI();
       player.updateInventory();
-    } else if (slot == 47) { // Preview animation
+    } else if (slot == 47) {
       new PreviewAnimationGUI(player, nameTag).open();
-    } else if (slot == 48 && frameColors.size() > 1) { // Delete frame
+    } else if (slot == 48 && frameColors.size() > 1) {
       frameColors.remove(currentFrameIndex);
       if (currentFrameIndex >= frameColors.size()) {
         currentFrameIndex = frameColors.size() - 1;
@@ -276,34 +269,34 @@ public class NameCustomizationGUI implements InventoryHolder, Listener {
       displayName.setFrameColors(frameColors);
       populateGUI();
       player.updateInventory();
-    } else if (slot == 49) { // Toggle prefix/suffix
+    } else if (slot == 49) {
       boolean isEnabled = !displayName.isPrefixEnabled();
       displayName.setPrefixEnabled(isEnabled);
       displayName.setSuffixEnabled(isEnabled);
       populateGUI();
       player.updateInventory();
-    } else if (slot == 50) { // Reset colors
+    } else if (slot == 50) {
       List<List<TextColor>> newFrameColors = new ArrayList<>();
       displayName.setFrameColors(newFrameColors);
       nameTag.setFrameDisplayNameColors(newFrameColors);
       currentFrameIndex = 0;
       populateGUI();
       player.updateInventory();
-    } else if (slot == 51) { // Decrease refresh rate
+    } else if (slot == 51) {
       int currentRate = displayName.getRefreshRate();
       if (currentRate > 1) {
         displayName.setRefreshRate(currentRate - 1);
         populateGUI();
         player.updateInventory();
       }
-    } else if (slot == 52) { // Increase refresh rate
+    } else if (slot == 52) {
       int currentRate = displayName.getRefreshRate();
       if (currentRate < 10) {
         displayName.setRefreshRate(currentRate + 1);
         populateGUI();
         player.updateInventory();
       }
-    } else if (slot == 53) { // Back to customization GUI
+    } else if (slot == 53) {
       new CustomizationGUI(player).open();
       HandlerList.unregisterAll(this);
     }
@@ -322,13 +315,11 @@ public class NameCustomizationGUI implements InventoryHolder, Listener {
   }
 
   private Material getDyeMaterial(TextColor color) {
-    // First, check for an exact match
     for (Map.Entry<Material, TextColor> entry : DYE_COLORS.entrySet()) {
       if (entry.getValue().equals(color)) {
         return entry.getKey();
       }
     }
-    // If no exact match, find the closest color
     Material closestDye = null;
     double minDistance = Double.MAX_VALUE;
     for (Map.Entry<Material, TextColor> entry : DYE_COLORS.entrySet()) {

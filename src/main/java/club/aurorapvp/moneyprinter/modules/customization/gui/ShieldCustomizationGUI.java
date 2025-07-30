@@ -89,22 +89,17 @@ public class ShieldCustomizationGUI implements InventoryHolder, Listener {
   private void populateGUI() {
     inventory.clear();
 
-    // Slot 0: Base Color (Wool)
     inventory.setItem(0, createBaseColorItem());
 
-    // Slot 1: Pattern Selector (Banner)
     inventory.setItem(1, createPatternTypeItem());
 
-    // Slot 2: Pattern Color Selector (Wool)
     inventory.setItem(2, createPatternColorItem());
 
-    // Slot 3: Add Pattern
     ItemStack addPattern = new ItemStack(Material.EMERALD);
     addPattern.editMeta(
         meta -> meta.displayName(MoneyPrinter.getInstance().getLang().getComponent("add-pattern")));
     inventory.setItem(3, addPattern);
 
-    // Slot 4: Clear All Patterns
     ItemStack clearAll = new ItemStack(Material.TNT);
     clearAll.editMeta(
         meta ->
@@ -112,10 +107,8 @@ public class ShieldCustomizationGUI implements InventoryHolder, Listener {
                 MoneyPrinter.getInstance().getLang().getComponent("clear-all-patterns")));
     inventory.setItem(4, clearAll);
 
-    // Slot 7: Preview Shield
     inventory.setItem(7, createPreviewShield());
 
-    // Slot 8: Back
     ItemStack back = new ItemStack(Material.BARRIER);
     back.editMeta(
         meta -> meta.displayName(MoneyPrinter.getInstance().getLang().getComponent("back")));
@@ -224,7 +217,6 @@ public class ShieldCustomizationGUI implements InventoryHolder, Listener {
     if (event.getInventory().getHolder() == this) {
       savePatterns();
       settingsManager.setShieldBaseColor(baseColor.name());
-      // Update all shields in the main inventory
       for (ItemStack item : player.getInventory()) {
         if (item != null && item.getType() == Material.SHIELD) {
           applyShieldCustomization(item);

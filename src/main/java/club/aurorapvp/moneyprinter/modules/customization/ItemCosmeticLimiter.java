@@ -44,7 +44,6 @@ public class ItemCosmeticLimiter {
       return;
     }
 
-    // Handle item renaming permissions
     if (!player.hasPermission("moneyprinter.renameitems") && ItemStackUtil.hasBeenRenamed(itemStack)) {
       ItemStackUtil.renameToPlainText(itemStack);
       player.sendMessage(MoneyPrinter.getInstance().getLang().getComponent("cannot-use-personalized"));
@@ -53,7 +52,6 @@ public class ItemCosmeticLimiter {
 
     CosmeticSettingsManager settingsManager = CosmeticSettingsManager.getInstance(player);
 
-    // Handle armor customization
     if (player.hasPermission("moneyprinter.customize.armor") && itemStack.getItemMeta() instanceof ArmorMeta armorMeta) {
       String piece = getArmorPieceType(itemStack.getType());
       if (piece != null) {
@@ -77,7 +75,6 @@ public class ItemCosmeticLimiter {
       }
     }
 
-    // Handle shield customization
     if (player.hasPermission("moneyprinter.customize.shield") && itemStack.getType() == Material.SHIELD) {
       List<String> patternStrings = settingsManager.getShieldBannerPatterns();
       String baseColorStr = settingsManager.getShieldBaseColor();

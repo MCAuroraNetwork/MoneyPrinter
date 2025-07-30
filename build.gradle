@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'io.github.goooler.shadow' version '8.1.8'
+    id 'io.papermc.paperweight.userdev' version '2.0.0-beta.18'
 }
 
 group = 'MoneyPrinter'
@@ -20,11 +21,13 @@ repositories {
         url = 'https://repo.aikar.co/content/groups/aikar/'
     }
     maven {
-        name = "citizens-repo"
-        url = "https://maven.citizensnpcs.co/repo"
+        url = 'https://repo.codemc.io/repository/maven-releases/'
     }
     maven {
-        url = "https://repo.dmulloy2.net/repository/public/"
+        url = 'https://libraries.minecraft.net/'
+    }
+    maven {
+        url = 'https://repo.codemc.io/repository/maven-snapshots/'
     }
     flatDir {
         dirs '.'
@@ -32,12 +35,14 @@ repositories {
 }
 
 dependencies {
+    paperweight.devBundle("io.papermc.paper", "1.21.4-R0.1-SNAPSHOT")
+
     implementation 'org.mongodb:mongodb-driver-sync:5.2.0'
     implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
+    implementation 'com.github.retrooper:packetevents-spigot:2.9.3'
 
     compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
-    compileOnly 'net.citizensnpcs:citizens-main:2.0.38-SNAPSHOT'
-    compileOnly 'com.comphenix.protocol:ProtocolLib:5.1.0'
+    compileOnly 'com.mojang:authlib:6.0.58'
     compileOnly ':AuroraChat:1.1.0'
 }
 
@@ -50,6 +55,8 @@ shadowJar {
     archiveFileName.set("${project.name}-${project.version}.jar")
     relocate 'co.aikar.commands', 'club.aurorapvp.moneyprinter.shaded.acf'
     relocate 'co.aikar.locales', 'club.aurorapvp.moneyprinter.shaded.locales'
+    relocate 'com.github.retrooper.packetevents', 'club.aurorapvp.moneyprinter.shaded.com.github.retrooper.packetevents'
+    relocate 'io.github.retrooper.packetevents', 'club.aurorapvp.moneyprinter.shaded.io.github.retrooper.packetevents'
 }
 
 def targetJavaVersion = 21
