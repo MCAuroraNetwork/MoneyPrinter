@@ -55,8 +55,8 @@ public class Lang {
     DEFAULTS.put("customize-armor-trim", "<yellow><bold>Customize %s Trim");
     DEFAULTS.put("trim-pattern", "<yellow>%s");
     DEFAULTS.put("trim-material", "<yellow>%s");
-    DEFAULTS.put("selected-trim-pattern", "<yellow>Selected Pattern: <bold>%s<reset><yellow> ✓");
-    DEFAULTS.put("selected-trim-material", "<yellow>Selected Material: <bold>%s<reset><yellow> ✓");
+    DEFAULTS.put("selected-trim-pattern", "<bold>%s<reset><yellow> ✓");
+    DEFAULTS.put("selected-trim-material", "<bold>%s<reset><yellow> ✓");
     DEFAULTS.put("clear-trim", "<red>Clear Trim ✗");
     DEFAULTS.put("customize-shield-banner", "<yellow><bold>Customize Shield Banner 🛡");
     DEFAULTS.put("base-color", "<yellow>Base Color: <bold>%s");
