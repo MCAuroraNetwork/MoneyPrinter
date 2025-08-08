@@ -250,13 +250,29 @@ public class NameCustomizationGUI implements InventoryHolder, Listener {
       populateGUI();
       player.updateInventory();
     } else if (slot == 46) {
-      int totalFrames = frameColors.size();
-      if (currentFrameIndex == totalFrames - 1 && !frameColors.get(totalFrames - 1).isEmpty() && totalFrames < 10) {
-        frameColors.add(new ArrayList<>());
-        currentFrameIndex++;
-      } else {
-        currentFrameIndex = (currentFrameIndex + 1) % totalFrames;
+      List<List<TextColor>> frames = displayName.getFrameColors();
+      if (frames == null) {
+        frames = new ArrayList<>();
+        displayName.setFrameColors(frames);
       }
+      if (frames.isEmpty()) {
+        frames.add(new ArrayList<>());
+      }
+
+      int totalFrames = frames.size();
+
+      if (totalFrames >= 10) {
+        currentFrameIndex = 0;
+      } else {
+        if (currentFrameIndex < totalFrames - 1) {
+          currentFrameIndex++;
+        } else {
+          frames.add(new ArrayList<>());
+          currentFrameIndex = frames.size() - 1;
+          displayName.setFrameColors(frames); // persist the change
+        }
+      }
+
       populateGUI();
       player.updateInventory();
     } else if (slot == 47) {
