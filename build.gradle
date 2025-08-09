@@ -27,7 +27,7 @@ repositories {
         url = 'https://libraries.minecraft.net/'
     }
     maven {
-        url = 'https://repo.codemc.io/repository/maven-snapshots/'
+        url = 'https://jitpack.io'
     }
     flatDir {
         dirs '.'
@@ -43,6 +43,9 @@ dependencies {
 
     compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
     compileOnly 'com.mojang:authlib:6.0.58'
+    compileOnly('com.github.MilkBowl:VaultAPI:1.7') {
+        exclude group: 'org.bukkit', module: 'bukkit'
+    }
     compileOnly ':AuroraChat:1.1.0'
 }
 

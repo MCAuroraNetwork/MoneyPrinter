@@ -8,6 +8,7 @@ import club.aurorapvp.moneyprinter.MoneyPrinter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -21,6 +22,8 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import net.milkbowl.vault.chat.Chat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -269,7 +272,7 @@ public class NameCustomizationGUI implements InventoryHolder, Listener {
         } else {
           frames.add(new ArrayList<>());
           currentFrameIndex = frames.size() - 1;
-          displayName.setFrameColors(frames); // persist the change
+          displayName.setFrameColors(frames);
         }
       }
 
@@ -373,6 +376,7 @@ class PreviewAnimationGUI implements InventoryHolder, Listener {
   private final NameTag nameTag;
   private final Inventory inventory;
   private BukkitRunnable animationTask;
+  private Chat chat;
 
   public PreviewAnimationGUI(Player player, NameTag nameTag) {
     this.player = player;
@@ -380,8 +384,19 @@ class PreviewAnimationGUI implements InventoryHolder, Listener {
     this.inventory =
             Bukkit.createInventory(
                     this, 9, MoneyPrinter.getInstance().getLang().getComponent("preview-animation"));
+    this.chat = resolveVaultChat();
     populateGUI();
     Bukkit.getPluginManager().registerEvents(this, MoneyPrinter.getInstance());
+  }
+
+  private Chat resolveVaultChat() {
+    try {
+      RegisteredServiceProvider<Chat> rsp =
+              Bukkit.getServer().getServicesManager().getRegistration(Chat.class);
+      return rsp != null ? rsp.getProvider() : null;
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   private void populateGUI() {
@@ -407,7 +422,7 @@ class PreviewAnimationGUI implements InventoryHolder, Listener {
   private void startAnimation() {
     List<List<TextColor>> frameColors = nameTag.getDisplayName().getFrameColors();
     int refreshRate = nameTag.getDisplayName().getRefreshRate();
-    long ticksPerFrame = Math.max(2, 20 / refreshRate);
+    long ticksPerFrame = Math.max(2, 20 / Math.max(1, refreshRate));
 
     animationTask =
             new BukkitRunnable() {
@@ -420,16 +435,40 @@ class PreviewAnimationGUI implements InventoryHolder, Listener {
                   return;
                 }
                 List<TextColor> frame = frameColors.get(current % frameColors.size());
-                Component displayName =
-                        ComponentUtil.createGradient(
-                                player.getName(), frame.isEmpty() ? List.of(NamedTextColor.WHITE) : frame);
+                List<TextColor> colors = frame.isEmpty() ? List.of(NamedTextColor.WHITE) : frame;
+
+                Component nameComponent = ComponentUtil.createGradient(player.getName(), colors);
+
+                DisplayName displayName = nameTag.getDisplayName();
+
+                String prefixStr = "";
+                String suffixStr = "";
+                if (chat != null) {
+                  try {
+                    prefixStr = chat.getPlayerPrefix(player);
+                    suffixStr = chat.getPlayerSuffix(player);
+                  } catch (Exception ignored) {
+                  }
+                }
+
+                Component fullDisplay = nameComponent;
+                MiniMessage mm = MiniMessage.miniMessage();
+
+                if (displayName.isPrefixEnabled() && prefixStr != null && !prefixStr.isEmpty()) {
+                  fullDisplay = mm.deserialize(prefixStr).append(fullDisplay);
+                }
+                if (displayName.isSuffixEnabled() && suffixStr != null && !suffixStr.isEmpty()) {
+                  fullDisplay = fullDisplay.append(mm.deserialize(suffixStr));
+                }
+
                 ItemStack head = inventory.getItem(4);
                 if (head != null) {
+                  Component finalFullDisplay = fullDisplay;
                   head.editMeta(
                           SkullMeta.class,
                           meta -> {
                             meta.setOwningPlayer(player);
-                            meta.displayName(displayName);
+                            meta.displayName(finalFullDisplay);
                           });
                 }
                 current++;
